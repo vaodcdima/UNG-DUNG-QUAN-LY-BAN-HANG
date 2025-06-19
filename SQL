@@ -1,0 +1,69 @@
+CREATE DATABASE QLBanHang;
+GO
+USE QLBanHang;
+GO
+-- Bảng chất liệu
+CREATE TABLE [dbo].[tblChatLieu] (
+    [MaChatLieu]  NVARCHAR(50) NOT NULL,
+    [TenChatLieu] NVARCHAR(50) NULL,
+    PRIMARY KEY CLUSTERED ([MaChatLieu] ASC)
+);
+
+-- Bảng khách hàng
+CREATE TABLE [dbo].[tblMaKhach] (
+    [MaKhach]   NVARCHAR(10) NOT NULL,
+    [TenKhach]  NVARCHAR(50) NOT NULL,
+    [DiaChi]    NVARCHAR(50) NOT NULL,
+    [DienThoai] NVARCHAR(50) NOT NULL,
+    PRIMARY KEY CLUSTERED ([MaKhach] ASC)
+);
+
+-- Bảng nhân viên
+CREATE TABLE [dbo].[tblNhanVien] (
+    [MaNhanVien]  NVARCHAR(50) NOT NULL,
+    [TenNhanVien] NVARCHAR(50) NOT NULL,
+    [GioiTinh]    NVARCHAR(10) NOT NULL,
+    [DiaChi]      NVARCHAR(50) NOT NULL,
+    [DienThoai]   NVARCHAR(15) NOT NULL,
+    [NgaySinh]    DATETIME NOT NULL,
+    PRIMARY KEY CLUSTERED ([MaNhanVien] ASC)
+);
+
+-- Bảng hàng hóa
+CREATE TABLE [dbo].[tblHang] (
+    [MaHang]     NVARCHAR(50)  NOT NULL,
+    [TenHang]    NVARCHAR(50)  NOT NULL,
+    [MaChatLieu] NVARCHAR(50)  NOT NULL,
+    [SoLuong]    FLOAT(53)     NOT NULL,
+    [DonGiaNhap] FLOAT(53)     NOT NULL,
+    [DonGiaBan]  FLOAT(53)     NOT NULL,
+    [Anh]        NVARCHAR(200) NOT NULL,
+    [GhiChu]     NVARCHAR(200) NULL,
+    PRIMARY KEY CLUSTERED ([MaHang] ASC),
+    FOREIGN KEY ([MaChatLieu]) REFERENCES [dbo].[tblChatLieu]([MaChatLieu])
+);
+
+-- Bảng hóa đơn bán
+CREATE TABLE [dbo].[tblHDBan] (
+    [MaHDBan]    NVARCHAR(30) NOT NULL,
+    [MaNhanVien] NVARCHAR(50) NOT NULL,
+    [NgayBan]    DATETIME     NOT NULL,
+    [MaKhach]    NVARCHAR(10) NOT NULL,
+    [TongTien]   FLOAT(53)    NOT NULL,
+    PRIMARY KEY CLUSTERED ([MaHDBan] ASC),
+    FOREIGN KEY ([MaNhanVien]) REFERENCES [dbo].[tblNhanVien]([MaNhanVien]),
+    FOREIGN KEY ([MaKhach]) REFERENCES [dbo].[tblMaKhach]([MaKhach])
+);
+
+-- Bảng chi tiết hóa đơn bán
+CREATE TABLE [dbo].[tblChiTietHDBan] (
+    [MaHDBan]   NVARCHAR(30) NOT NULL,
+    [MaHang]    NVARCHAR(50) NOT NULL,
+    [SoLuong]   FLOAT(53)    NOT NULL,
+    [DonGia]    FLOAT(53)    NOT NULL,
+    [GiamGia]   FLOAT(53)    NOT NULL,
+    [ThanhTien] FLOAT(53)    NOT NULL,
+    PRIMARY KEY CLUSTERED ([MaHang] ASC, [MaHDBan] ASC),
+    FOREIGN KEY ([MaHDBan]) REFERENCES [dbo].[tblHDBan]([MaHDBan]),
+    FOREIGN KEY ([MaHang]) REFERENCES [dbo].[tblHang]([MaHang])
+);
